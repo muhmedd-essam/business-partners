@@ -21,7 +21,7 @@ class PartnerController extends Controller
         }
 
     public function store(storePartnerRequest $request){
-        if (auth()->check() && auth()->user()->role == 'admin') {
+        $this->authorize("create", [ Partner::class, $request]);
             $partner = new partner();
             $partner->partner = $request->input('partner');
             $partner->description = $request->input('description');
@@ -40,14 +40,12 @@ class PartnerController extends Controller
             $partner->phone = $request->input('phone');
             $partner->save();
 
-                return response()->json(['message' => 'done created task', 'data'=>$partner]);
-            }
-
-        return response()->json(['message' => 'not for you']);
+            return response()->json(['message' => 'done created task', 'data'=>$partner]);
+            
 }
 
     public function update($partner,updatePartnerRequest $request){
-        if (auth()->check() && auth()->user()->role == 'admin') {
+            $this->authorize("update", [ Partner::class, $request]);
             $singlePartner=partner::Find($partner);
             if (!$singlePartner) {
                 return response()->json(['message' => 'Note not found'], 404);
@@ -74,18 +72,15 @@ class PartnerController extends Controller
 
         return response()->json(['message' => 'Task updated','task' => $singlePartner]);
 
-        }}
+        }
 
         public function destroy($partner){
-            if (auth()->check() && auth()->user()->role == 'admin') {
+                $this->authorize("update", [ Partner::class]);
                 $singlePartner=partner::Find($partner);
                 if (!$singlePartner){
                     return response()->json(['message' => 'Note not found']);
                 };
                 $singlePartner->delete();
                 return response()->json(['message' => 'done delete']);
-
-            }
-  return response()->json(['message' => 'not for you']);
 }
 }
